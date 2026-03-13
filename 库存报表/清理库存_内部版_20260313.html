@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>清理库存内部版 · 含成本 · 宇宙销售统计中心</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#FAF9F6;color:#111111;font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;font-size:12px;line-height:1.6}
+.page{max-width:1100px;margin:0 auto;padding:40px 48px}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:12px;border-bottom:1px solid #111111;margin-bottom:32px}
+.header-left h1{font-family:Georgia,'Noto Serif SC',serif;font-size:22px;font-weight:700;letter-spacing:0.3px}
+.header-left p{font-size:10px;color:#555555;margin-top:4px}
+.header-right{font-size:10px;color:#555555;text-align:right;line-height:1.8}
+.burgundy-line{height:2px;background:#8B1A1A;width:48px;margin-top:8px}
+.badge-internal{display:inline-block;background:#8B1A1A;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;margin-left:10px;vertical-align:middle}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #E8E8E8;margin-bottom:32px}
+.kpi{padding:18px 22px;border-right:1px solid #E8E8E8}
+.kpi:last-child{border-right:none}
+.kpi-label{font-size:9px;color:#555555;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.kpi-value{font-family:'Calibri',Arial,sans-serif;font-size:26px;font-weight:700;color:#111111;font-variant-numeric:tabular-nums}
+.kpi-value.alert{color:#8B1A1A}
+.kpi-sub{font-size:9px;color:#555555;margin-top:4px}
+
+.section{margin-bottom:28px}
+.section-title{font-family:Georgia,'Noto Serif SC',serif;font-size:15px;font-weight:600;color:#111111;padding-bottom:8px;margin-bottom:14px;border-bottom:1px solid #CCCCCC;display:flex;align-items:center;gap:12px}
+.section-title span{font-size:9px;color:#555555;font-family:Arial,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:0.8px}
+
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead tr{background:#111111}
+thead th{color:#FFFFFF;font-weight:600;font-size:10px;padding:8px 12px;text-align:left}
+thead th.num{text-align:right}
+tbody tr:nth-child(even){background:#F5F5F5}
+tbody tr:nth-child(odd){background:#FFFFFF}
+tbody td{padding:7px 12px;color:#111111;border-bottom:1px solid #CCCCCC}
+tbody td.num{text-align:right;font-family:'Calibri',Arial,sans-serif;font-variant-numeric:tabular-nums}
+tbody td.alert{color:#8B1A1A;font-weight:600;text-align:right}
+tbody td.muted{color:#888888;text-align:right}
+tbody td.pos{color:#2a6041;font-weight:600;text-align:right}
+tbody td.neg{color:#8B1A1A;font-weight:600;text-align:right}
+tfoot tr{background:#E8E8E8;border-top:2px solid #111111}
+tfoot td{padding:8px 12px;font-weight:700;font-size:10px}
+tfoot td.num{text-align:right;font-family:'Calibri',Arial,sans-serif}
+
+.alert-box{border:1px solid #CCCCCC;padding:16px 20px;background:#FFFFFF;margin-bottom:28px}
+.alert-box-title{font-size:9px;font-weight:700;color:#8B1A1A;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.source{font-size:9px;color:#888888;margin-top:32px;padding-top:10px;border-top:1px solid #CCCCCC}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div class="header-left">
+    <h1>清理库存 · 成本核查表 <span class="badge-internal">INTERNAL</span></h1>
+    <p>宇宙销售统计中心 · 数据截至 2026年3月13日</p>
+    <div class="burgundy-line"></div>
+  </div>
+  <div class="header-right">
+    内部文件 · 含成本信息 · 请勿外传<br>生成时间：2026-03-13 19:35
+  </div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">清理 SKU 总数</div>
+    <div class="kpi-value">71</div>
+    <div class="kpi-sub">有库存 · 清理 + Pinarello 清理</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">库存成本合计</div>
+    <div class="kpi-value alert">¥184.4万</div>
+    <div class="kpi-sub">¥1,844,197</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">已标价清理总额</div>
+    <div class="kpi-value">¥105.0万</div>
+    <div class="kpi-sub">¥1,049,995 · 31 个已标价</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">整体价差率</div>
+    <div class="kpi-value alert">-43.1%</div>
+    <div class="kpi-sub">低于成本，需关注</div>
+  </div>
+</div>
+
+
+<div class="alert-box">
+  <div class="alert-box-title">⚑ 40 个 SKU 暂未标清理底价</div>
+  <p style="font-size:10px;color:#555555;line-height:1.8">GUSTO 整车 GTR 白色 M、Pinarello 整车 F9 黑白 545、Pinarello 整车 X5 白色蓝标、Pinarello 整车 X5 黑色银标、RIDLEY 整车 紫色 M码（带车把）等共 40 个，其库存成本仍计入合计，但清理总价列显示为空。</p>
+</div>
+
+
+<div class="section">
+  <div class="section-title">整车 <span>13 个 SKU · 共 13 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>CANYON 整车 Ultimate 爬坡架 XS</td>
+        <td>CANYON</td>
+        <td class="num">1</td>
+        <td class="num">33,996</td>
+        <td class="num">33,996</td>
+        <td class="num alert">34,000</td>
+        <td class="num alert">34,000</td>
+        <td class="num pos">+0.0%</td>
+      </tr>
+      <tr>
+        <td>Colnago 整车 Colnago V4 红色 420</td>
+        <td>Colnago</td>
+        <td class="num">1</td>
+        <td class="num">41,468</td>
+        <td class="num">41,468</td>
+        <td class="num alert">35,000</td>
+        <td class="num alert">35,000</td>
+        <td class="num neg">-15.6%</td>
+      </tr>
+      <tr>
+        <td>GUSTO 整车 GTR 白色 M</td>
+        <td>GUSTO</td>
+        <td class="num">1</td>
+        <td class="num">11,800</td>
+        <td class="num">11,800</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Lykos 整车 Lykos 蓝 48</td>
+        <td>Lykos</td>
+        <td class="num">1</td>
+        <td class="num">22,500</td>
+        <td class="num">22,500</td>
+        <td class="num alert">20,000</td>
+        <td class="num alert">20,000</td>
+        <td class="num neg">-11.1%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 F5 白 530</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 F5 白 560</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 F5 蓝 465</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 F9 黑白 545</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">31,500</td>
+        <td class="num">31,500</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 F9 黑绿 515</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">31,500</td>
+        <td class="num">31,500</td>
+        <td class="num alert">32,000</td>
+        <td class="num alert">32,000</td>
+        <td class="num pos">+1.6%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 X5 白色蓝标</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">20,000</td>
+        <td class="num">20,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 X5 黑色银标</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">20,000</td>
+        <td class="num">20,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Pinarello 整车 X9 金色 530</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">33,916</td>
+        <td class="num">33,916</td>
+        <td class="num alert">34,000</td>
+        <td class="num alert">34,000</td>
+        <td class="num pos">+0.2%</td>
+      </tr>
+      <tr>
+        <td>RIDLEY 整车 紫色 M码（带车把）</td>
+        <td>RIDLEY</td>
+        <td class="num">1</td>
+        <td class="num">16,500</td>
+        <td class="num">16,500</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">13</td>
+      <td></td>
+      <td class="num">336,380</td>
+      <td></td>
+      <td class="num">230,000</td>
+      <td class="num">-31.6%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">车架 <span>22 个 SKU · 共 26 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>AURUM   车架 ESSENTIA 岩石灰 51</td>
+        <td>AURUM</td>
+        <td class="num">1</td>
+        <td class="num">22,260</td>
+        <td class="num">22,260</td>
+        <td class="num alert">15,000</td>
+        <td class="num alert">15,000</td>
+        <td class="num neg">-32.6%</td>
+      </tr>
+      <tr>
+        <td>AURUM   车架 MAGMA V1 玛瑙黑 48</td>
+        <td>AURUM</td>
+        <td class="num">1</td>
+        <td class="num">25,220</td>
+        <td class="num">25,220</td>
+        <td class="num alert">18,000</td>
+        <td class="num alert">18,000</td>
+        <td class="num neg">-28.6%</td>
+      </tr>
+      <tr>
+        <td>AURUM   车架 MAGMA V2 白色 58（含座管）</td>
+        <td>AURUM</td>
+        <td class="num">1</td>
+        <td class="num">32,760</td>
+        <td class="num">32,760</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num neg">-23.7%</td>
+      </tr>
+      <tr>
+        <td>Colnago 车架 C68 格雷金 510</td>
+        <td>Colnago</td>
+        <td class="num">1</td>
+        <td class="num">38,000</td>
+        <td class="num">38,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num neg">-34.2%</td>
+      </tr>
+      <tr>
+        <td>De Rosa 车架 idol 红 53</td>
+        <td>De Rosa</td>
+        <td class="num">1</td>
+        <td class="num">18,000</td>
+        <td class="num">18,000</td>
+        <td class="num alert">15,000</td>
+        <td class="num alert">15,000</td>
+        <td class="num neg">-16.7%</td>
+      </tr>
+      <tr>
+        <td>Dogma X 车架 BOB 515</td>
+        <td>Dogma X</td>
+        <td class="num">1</td>
+        <td class="num">28,000</td>
+        <td class="num">28,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9  黑白 560</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9  黑白 575</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 BOB 465</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 BOB 515</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 BOB 530</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 宝石蓝 500</td>
+        <td>Pinarello</td>
+        <td class="num">2</td>
+        <td class="num">24,400</td>
+        <td class="num">48,800</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">50,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 宝石蓝 515</td>
+        <td>Pinarello</td>
+        <td class="num">2</td>
+        <td class="num">24,400</td>
+        <td class="num">48,800</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">50,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 宝石蓝 530</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 宝石蓝 545</td>
+        <td>Pinarello</td>
+        <td class="num">2</td>
+        <td class="num">24,400</td>
+        <td class="num">48,800</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">50,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 F9 蓝黑 530</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">24,400</td>
+        <td class="num">24,400</td>
+        <td class="num alert">25,000</td>
+        <td class="num alert">25,000</td>
+        <td class="num pos">+2.5%</td>
+      </tr>
+      <tr>
+        <td>Pinarello 车架 X9 金色 545</td>
+        <td>Pinarello</td>
+        <td class="num">1</td>
+        <td class="num">21,720</td>
+        <td class="num">21,720</td>
+        <td class="num alert">22,000</td>
+        <td class="num alert">22,000</td>
+        <td class="num pos">+1.3%</td>
+      </tr>
+      <tr>
+        <td>RIDLEY 车架 粉色 XS码（带车把）</td>
+        <td>RIDLEY</td>
+        <td class="num">1</td>
+        <td class="num">7,825</td>
+        <td class="num">7,825</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>RIDLEY 车架 黑白 L码（带车把）</td>
+        <td>RIDLEY</td>
+        <td class="num">1</td>
+        <td class="num">7,825</td>
+        <td class="num">7,825</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SPECIALIZED 车架 SL8 玫瑰金 54</td>
+        <td>SPECIALIZED</td>
+        <td class="num">1</td>
+        <td class="num">31,550</td>
+        <td class="num">31,550</td>
+        <td class="num alert">29,999</td>
+        <td class="num alert">29,999</td>
+        <td class="num neg">-4.9%</td>
+      </tr>
+      <tr>
+        <td>Standert 车架 白咖 52</td>
+        <td>Standert</td>
+        <td class="num">2</td>
+        <td class="num">15,000</td>
+        <td class="num">30,000</td>
+        <td class="num alert">15,000</td>
+        <td class="num alert">30,000</td>
+        <td class="num pos">+0.0%</td>
+      </tr>
+      <tr>
+        <td>Standert 车架 黑 48</td>
+        <td>Standert</td>
+        <td class="num">1</td>
+        <td class="num">15,000</td>
+        <td class="num">15,000</td>
+        <td class="num alert">13,000</td>
+        <td class="num alert">13,000</td>
+        <td class="num neg">-13.3%</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">26</td>
+      <td></td>
+      <td class="num">595,360</td>
+      <td></td>
+      <td class="num">517,999</td>
+      <td class="num">-13.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">轮组 <span>10 个 SKU · 共 33 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>DT 轮组 ARC 1100 38 (SH)</td>
+        <td>DT</td>
+        <td class="num">1</td>
+        <td class="num">13,100</td>
+        <td class="num">13,100</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>FSA 轮组 vision 45 RS</td>
+        <td>FSA</td>
+        <td class="num">1</td>
+        <td class="num">18,488</td>
+        <td class="num">18,488</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>PCW 轮组 古铜金6560</td>
+        <td>PCW</td>
+        <td class="num">1</td>
+        <td class="num">25,000</td>
+        <td class="num">25,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>PCW 轮组 黑 4540 CK花鼓 (SH)</td>
+        <td>PCW</td>
+        <td class="num">2</td>
+        <td class="num">24,000</td>
+        <td class="num">48,000</td>
+        <td class="num alert">18,000</td>
+        <td class="num alert">36,000</td>
+        <td class="num neg">-25.0%</td>
+      </tr>
+      <tr>
+        <td>PCW 轮组 黑粉 6560</td>
+        <td>PCW</td>
+        <td class="num">1</td>
+        <td class="num">22,150</td>
+        <td class="num">22,150</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SCOM 风刃 轮组 49/67 银标 碟刹</td>
+        <td>SCOM 风刃</td>
+        <td class="num">2</td>
+        <td class="num">3,500</td>
+        <td class="num">7,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SCOM 风刃 轮组 49/67 黑标 碟刹</td>
+        <td>SCOM 风刃</td>
+        <td class="num">6</td>
+        <td class="num">3,500</td>
+        <td class="num">21,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Superteam 轮组 水滴纹 (SH)</td>
+        <td>Superteam</td>
+        <td class="num">1</td>
+        <td class="num">6,099</td>
+        <td class="num">6,099</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Superteam 轮组 鲨鱼纹 (SH)</td>
+        <td>Superteam</td>
+        <td class="num">1</td>
+        <td class="num">4,199</td>
+        <td class="num">4,199</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>ZIPP 轮组 353 (SH)</td>
+        <td>ZIPP</td>
+        <td class="num">17</td>
+        <td class="num">14,295</td>
+        <td class="num">243,015</td>
+        <td class="num alert">14,000</td>
+        <td class="num alert">238,000</td>
+        <td class="num neg">-2.1%</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">33</td>
+      <td></td>
+      <td class="num">408,051</td>
+      <td></td>
+      <td class="num">274,000</td>
+      <td class="num">-32.9%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">座垫 <span>7 个 SKU · 共 340 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>SMP 座垫 EVO EVO 30C 白</td>
+        <td>SMP</td>
+        <td class="num">1</td>
+        <td class="num">1,200</td>
+        <td class="num">1,200</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SMP 座垫 EVO EVO PLUS</td>
+        <td>SMP</td>
+        <td class="num">1</td>
+        <td class="num">1,126</td>
+        <td class="num">1,126</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SMP 座垫 F20C SI CARBON RAIL</td>
+        <td>SMP</td>
+        <td class="num">1</td>
+        <td class="num">1,596</td>
+        <td class="num">1,596</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SMP 座垫 F20C SI TEST 红色黄色</td>
+        <td>SMP</td>
+        <td class="num">1</td>
+        <td class="num">645</td>
+        <td class="num">645</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>SMP 座垫 F30C SI TEST 红色黄色</td>
+        <td>SMP</td>
+        <td class="num">1</td>
+        <td class="num">645</td>
+        <td class="num">645</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Selle Italia  座垫 3D 碳轨 黑色（散装）</td>
+        <td>Selle Italia</td>
+        <td class="num">222</td>
+        <td class="num">1,200</td>
+        <td class="num">266,400</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>萨玛仕 座垫 3D打印（电助力用）</td>
+        <td>萨玛仕</td>
+        <td class="num">113</td>
+        <td class="num">200</td>
+        <td class="num">22,600</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">340</td>
+      <td></td>
+      <td class="num">294,212</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">车把一体把 <span>11 个 SKU · 共 58 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 40-100</td>
+        <td>DEDA</td>
+        <td class="num">15</td>
+        <td class="num">2,800</td>
+        <td class="num">42,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 40-110</td>
+        <td>DEDA</td>
+        <td class="num">11</td>
+        <td class="num">2,800</td>
+        <td class="num">30,800</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 42-100</td>
+        <td>DEDA</td>
+        <td class="num">1</td>
+        <td class="num">2,800</td>
+        <td class="num">2,800</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 42-110</td>
+        <td>DEDA</td>
+        <td class="num">1</td>
+        <td class="num">2,800</td>
+        <td class="num">2,800</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 44-100</td>
+        <td>DEDA</td>
+        <td class="num">9</td>
+        <td class="num">2,800</td>
+        <td class="num">25,200</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 44-110</td>
+        <td>DEDA</td>
+        <td class="num">7</td>
+        <td class="num">2,800</td>
+        <td class="num">19,600</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>DEDA 车把一体把 Alanera RS 44-120</td>
+        <td>DEDA</td>
+        <td class="num">8</td>
+        <td class="num">2,800</td>
+        <td class="num">22,400</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>EASTON 车把一体把 分体 44-31.8</td>
+        <td>EASTON</td>
+        <td class="num">1</td>
+        <td class="num">600</td>
+        <td class="num">600</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>Rapantahi 车把一体把 420-100</td>
+        <td>Rapantahi</td>
+        <td class="num">1</td>
+        <td class="num">600</td>
+        <td class="num">600</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>THM 车把一体把 Frontale 400-100</td>
+        <td>THM</td>
+        <td class="num">1</td>
+        <td class="num">7,520</td>
+        <td class="num">7,520</td>
+        <td class="num alert">6,999</td>
+        <td class="num alert">6,999</td>
+        <td class="num neg">-6.9%</td>
+      </tr>
+      <tr>
+        <td>THM 车把一体把 Frontale 400-110</td>
+        <td>THM</td>
+        <td class="num">3</td>
+        <td class="num">7,520</td>
+        <td class="num">22,560</td>
+        <td class="num alert">6,999</td>
+        <td class="num alert">20,997</td>
+        <td class="num neg">-6.9%</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">58</td>
+      <td></td>
+      <td class="num">176,880</td>
+      <td></td>
+      <td class="num">27,996</td>
+      <td class="num">-84.2%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">盘片 <span>1 个 SKU · 共 1 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>CARBON—TI 盘片 55-40</td>
+        <td>CARBON—TI</td>
+        <td class="num">1</td>
+        <td class="num">3,000</td>
+        <td class="num">3,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">1</td>
+      <td></td>
+      <td class="num">3,000</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">后拨导轮 <span>3 个 SKU · 共 5 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>CS 后拨导轮 Alpha AXS 队版（适用于速联）终身质保</td>
+        <td>CS</td>
+        <td class="num">1</td>
+        <td class="num">2,200</td>
+        <td class="num">2,200</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>CS 后拨导轮 后拨导轮 银色</td>
+        <td>CS</td>
+        <td class="num">2</td>
+        <td class="num">3,300</td>
+        <td class="num">6,600</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>CS 后拨导轮 蓝色（适用于禧玛诺）6年质保</td>
+        <td>CS</td>
+        <td class="num">2</td>
+        <td class="num">2,000</td>
+        <td class="num">4,000</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">5</td>
+      <td></td>
+      <td class="num">12,800</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">功率计 <span>1 个 SKU · 共 1 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>POWER 2 MAX 功率计 适用（SHIMANO）</td>
+        <td>POWER 2 MAX</td>
+        <td class="num">1</td>
+        <td class="num">2,050</td>
+        <td class="num">2,050</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">1</td>
+      <td></td>
+      <td class="num">2,050</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">曲柄组 <span>2 个 SKU · 共 6 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>POWER 2 MAX 曲柄组 ngeco 170</td>
+        <td>POWER 2 MAX</td>
+        <td class="num">5</td>
+        <td class="num">494</td>
+        <td class="num">2,470</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+      <tr>
+        <td>POWER 2 MAX 曲柄组 ngeco 172.5</td>
+        <td>POWER 2 MAX</td>
+        <td class="num">1</td>
+        <td class="num">494</td>
+        <td class="num">494</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">6</td>
+      <td></td>
+      <td class="num">2,964</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">功率计 <span>1 个 SKU · 共 1 件</span></div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th>系列</th>
+      <th class="num">数量</th>
+      <th class="num">成本价（¥）</th><th class="num">库存成本（¥）</th>
+      <th class="num">清理底价（¥）</th><th class="num">清理总价（¥）</th>
+      <th class="num">价差率</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>SRM 功率计 适用 绿色（DUB中轴）</td>
+        <td>SRM</td>
+        <td class="num">1</td>
+        <td class="num">12,500</td>
+        <td class="num">12,500</td>
+        <td class="num muted">待定</td>
+        <td class="num muted">—</td>
+        <td class="num muted">—</td>
+      </tr>
+    </tbody>
+    <tfoot><tr>
+      <td colspan="2">小计</td>
+      <td class="num">1</td>
+      <td></td>
+      <td class="num">12,500</td>
+      <td></td>
+      <td class="num">0</td>
+      <td class="num">-100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+
+<div class="source">数据来源：公路车库存报表 3月13日 版本 · 含成本信息 · 仅限内部使用</div>
+</div>
+</body>
+</html>

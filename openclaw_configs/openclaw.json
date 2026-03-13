@@ -1,0 +1,79 @@
+{
+  // 宇宙销售统计中心 — 业务系统虾 配置文件
+  // 最后更新：2026-03-12
+
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": { "mode": "token" }
+  },
+
+  "agents": {
+    "yewu-xia": {
+      // 主 Agent：业务系统虾
+      "name": "业务系统虾",
+      "workspace": "~/.openclaw/workspace/",
+      "model": {
+        "primary": "claude-sonnet-4-6",   // 主模型，性价比最优
+        "fallbacks": ["claude-opus-4-6"]   // 复杂任务升级
+      },
+      "heartbeat": "30m",
+      "elevated": false
+    }
+  },
+
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "domain": "feishu",               // 国内飞书用 feishu，海外 Lark 用 lark
+      "connectionMode": "websocket",    // 无需公网 IP，长连接模式
+      "streaming": true,                // 流式输出，消息逐字显示
+      "textChunkLimit": 2000,
+      "dmPolicy": "allowlist",          // 只允许白名单用户私信
+      "groupPolicy": "mention",         // 群里需要 @机器人 才响应
+
+      "accounts": {
+        "main": {
+          "appId": "cli_XXXXXXXXXX",       // 替换为你的飞书 App ID
+          "appSecret": "YOUR_APP_SECRET",  // 替换为你的 App Secret
+          "botName": "业务系统虾"
+        }
+      },
+
+      // 白名单：只有 Mia 和仓管可以私信机器人
+      "allowFrom": [
+        "ou_MIAS_OPEN_ID",        // Mia 的飞书 Open ID
+        "ou_CANGGUANS_OPEN_ID"    // 仓管的飞书 Open ID
+      ],
+
+      // 路由规则：不同场景绑定不同权限
+      "bindings": [
+        {
+          // Mia 的私信 → 全权限模式
+          "match": {
+            "channel": "feishu",
+            "peer": { "kind": "direct", "id": "ou_MIAS_OPEN_ID" }
+          },
+          "agentId": "yewu-xia"
+        },
+        {
+          // 仓管的私信 → 限库存查询
+          "match": {
+            "channel": "feishu",
+            "peer": { "kind": "direct", "id": "ou_CANGGUANS_OPEN_ID" }
+          },
+          "agentId": "yewu-xia"
+          // 权限限制在 SOUL.md 中通过规则实现
+        }
+      ]
+    }
+  },
+
+  // 飞书多维表格访问配置
+  "env": {
+    "FEISHU_APP_ID": "cli_XXXXXXXXXX",
+    "FEISHU_APP_SECRET": "YOUR_APP_SECRET",
+    "BITABLE_TOKEN": "YOUR_BITABLE_APP_TOKEN"
+  }
+}

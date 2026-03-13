@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>库存概览 · 宇宙销售统计中心</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#FAF9F6;color:#111111;font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;font-size:12px;line-height:1.6}
+.page{max-width:960px;margin:0 auto;padding:40px 48px}
+
+/* 页眉 */
+.header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:12px;border-bottom:1px solid #111111;margin-bottom:32px}
+.header-left h1{font-family:Georgia,'Noto Serif SC',serif;font-size:22px;font-weight:700;letter-spacing:0.3px}
+.header-left p{font-size:10px;color:#555555;margin-top:4px}
+.header-right{font-size:10px;color:#555555;text-align:right}
+.burgundy-line{height:2px;background:#8B1A1A;width:48px;margin-top:8px}
+
+/* KPI 区 */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #E8E8E8;margin-bottom:32px}
+.kpi{padding:20px 24px;border-right:1px solid #E8E8E8}
+.kpi:last-child{border-right:none}
+.kpi-label{font-size:9px;color:#555555;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.kpi-value{font-family:'Calibri','Source Sans Pro',Arial,sans-serif;font-size:28px;font-weight:700;color:#111111;font-variant-numeric:tabular-nums}
+.kpi-value.alert{color:#8B1A1A}
+.kpi-sub{font-size:9px;color:#555555;margin-top:4px}
+
+/* 章节标题 */
+.section{margin-bottom:28px}
+.section-title{font-family:Georgia,'Noto Serif SC',serif;font-size:15px;font-weight:600;color:#111111;padding-bottom:8px;margin-bottom:14px;border-bottom:1px solid #CCCCCC;display:flex;align-items:center;gap:12px}
+.section-title span{font-size:9px;color:#555555;font-family:Arial,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:0.8px}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead tr{background:#111111}
+thead th{color:#FFFFFF;font-weight:600;font-size:10px;padding:8px 12px;text-align:left}
+thead th.num{text-align:right}
+tbody tr:nth-child(even){background:#F5F5F5}
+tbody tr:nth-child(odd){background:#FFFFFF}
+tbody td{padding:7px 12px;color:#111111;border-bottom:1px solid #CCCCCC}
+tbody td.num{text-align:right;font-family:'Calibri','Source Sans Pro',Arial,sans-serif;font-variant-numeric:tabular-nums}
+tbody td.alert{color:#8B1A1A;font-weight:600}
+tbody td.muted{color:#555555}
+tfoot tr{background:#E8E8E8;border-top:2px solid #111111}
+tfoot td{padding:8px 12px;font-weight:700;font-size:10px}
+tfoot td.num{text-align:right;font-family:'Calibri',Arial,sans-serif}
+
+/* 进度条（仅用深海蓝，无渐变） */
+.bar-wrap{width:80px;height:6px;background:#E8E8E8;display:inline-block;vertical-align:middle;margin-left:8px}
+.bar-fill{height:6px;background:#2C3E6B}
+
+/* 双栏 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+
+/* 告警框 */
+.alert-box{border:1px solid #CCCCCC;padding:16px 20px;background:#FFFFFF;margin-bottom:28px}
+.alert-box-title{font-size:9px;font-weight:700;color:#8B1A1A;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px}
+
+/* 来源 */
+.source{font-size:9px;color:#888888;margin-top:32px;padding-top:10px;border-top:1px solid #CCCCCC}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div class="header-left">
+    <h1>2026 库存现状概览</h1>
+    <p>宇宙销售统计中心 · 滨江仓库 · 截至 2026年3月11日</p>
+    <div class="burgundy-line"></div>
+  </div>
+  <div class="header-right">
+    内部文件 · 机密<br>数据来源：飞书多维表格
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">总库存成本</div>
+    <div class="kpi-value">449.2万</div>
+    <div class="kpi-sub">¥ 4,492,177</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">SKU 总数</div>
+    <div class="kpi-value">370</div>
+    <div class="kpi-sub">有库存 321 · 零库存 44</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">清理库存</div>
+    <div class="kpi-value alert">143.4万</div>
+    <div class="kpi-sub">占总成本 31.9% · 63个SKU</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">负库存告警</div>
+    <div class="kpi-value alert">5</div>
+    <div class="kpi-sub">需立即对账核查</div>
+  </div>
+</div>
+
+<!-- 品类 + 库存级别 双栏 -->
+<div class="two-col">
+
+<div class="section">
+  <div class="section-title">品类库存分布 <span>按成本金额降序</span></div>
+  <table>
+    <thead><tr>
+      <th>品类</th><th class="num">SKU数</th><th class="num">库存成本（元）</th><th class="num">占比</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>轮组</td><td class="num">33</td><td class="num">1,237,896</td><td class="num">27.6%<span class="bar-wrap"><span class="bar-fill" style="width:100%"></span></span></td></tr>
+      <tr><td>车架</td><td class="num">57</td><td class="num">1,165,555</td><td class="num">25.9%<span class="bar-wrap"><span class="bar-fill" style="width:94%"></span></span></td></tr>
+      <tr><td>套件组</td><td class="num">9</td><td class="num">405,815</td><td class="num">9.0%<span class="bar-wrap"><span class="bar-fill" style="width:33%"></span></span></td></tr>
+      <tr><td>座垫</td><td class="num">17</td><td class="num">395,452</td><td class="num">8.8%<span class="bar-wrap"><span class="bar-fill" style="width:32%"></span></span></td></tr>
+      <tr><td>整车</td><td class="num">17</td><td class="num">308,080</td><td class="num">6.9%<span class="bar-wrap"><span class="bar-fill" style="width:25%"></span></span></td></tr>
+      <tr><td>车把一体把</td><td class="num">23</td><td class="num">258,371</td><td class="num">5.8%<span class="bar-wrap"><span class="bar-fill" style="width:21%"></span></span></td></tr>
+      <tr><td>外胎</td><td class="num">22</td><td class="num">161,625</td><td class="num">3.6%<span class="bar-wrap"><span class="bar-fill" style="width:13%"></span></span></td></tr>
+      <tr><td>锁踏</td><td class="num">1</td><td class="num">108,150</td><td class="num">2.4%<span class="bar-wrap"><span class="bar-fill" style="width:9%"></span></span></td></tr>
+      <tr><td class="muted">其余18类</td><td class="num muted">182</td><td class="num muted">451,233</td><td class="num muted">10.0%</td></tr>
+    </tbody>
+    <tfoot><tr>
+      <td>合计</td><td class="num">370</td><td class="num">4,492,177</td><td class="num">100.0%</td>
+    </tr></tfoot>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">库存级别分布 <span>业务处理优先级</span></div>
+  <table>
+    <thead><tr>
+      <th>库存级别</th><th class="num">SKU数</th><th class="num">库存成本（元）</th><th class="num">占比</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="alert">清理库存</td><td class="num alert">63</td><td class="num alert">1,433,909</td><td class="num">31.9%</td></tr>
+      <tr><td>正常商品</td><td class="num">88</td><td class="num">1,149,683</td><td class="num">25.6%</td></tr>
+      <tr><td>高价商品</td><td class="num">36</td><td class="num">989,118</td><td class="num">22.0%</td></tr>
+      <tr><td>套件类</td><td class="num">25</td><td class="num">360,918</td><td class="num">8.0%</td></tr>
+      <tr><td>自营产品</td><td class="num">6</td><td class="num">294,759</td><td class="num">6.6%</td></tr>
+      <tr><td>配件</td><td class="num">125</td><td class="num">227,614</td><td class="num">5.1%</td></tr>
+      <tr><td class="muted">FSA 待处理</td><td class="num muted">4</td><td class="num muted">36,176</td><td class="num muted">0.8%</td></tr>
+      <tr><td class="muted">铺货商品</td><td class="num muted">21</td><td class="num muted">0</td><td class="num muted">0.0%</td></tr>
+    </tbody>
+    <tfoot><tr>
+      <td>合计</td><td class="num">368</td><td class="num">4,492,177</td><td class="num">100.0%</td>
+    </tr></tfoot>
+  </table>
+  <p style="font-size:9px;color:#555555;margin-top:8px">⚑ 清理库存占比最高，建议优先消化</p>
+</div>
+
+</div>
+
+<!-- 负库存告警 -->
+<div class="alert-box">
+  <div class="alert-box-title">⚑ 负库存告警 — 需立即核查（5个SKU）</div>
+  <table>
+    <thead><tr>
+      <th>SKU 名称</th><th class="num">库存数量</th><th class="num">成本价（元）</th><th class="num">售价（元）</th><th>库存级别</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>DA 套件组 基础配置无飞轮</td><td class="num alert">-13</td><td class="num">9,231</td><td class="num">10,500</td><td>套件类</td></tr>
+      <tr><td>UT 套件组 基础配置无飞轮</td><td class="num alert">-4</td><td class="num">5,689</td><td class="num alert">635</td><td>套件类</td></tr>
+      <tr><td>Gineyea 脚踏 黑</td><td class="num alert">-2</td><td class="num">34</td><td class="num">57</td><td>正常商品</td></tr>
+      <tr><td>Turtle Rabbit 骑行裤 男款 ¥739</td><td class="num alert">-1</td><td class="num">443</td><td class="num">739</td><td>配件</td></tr>
+      <tr><td>Turtle Rabbit 骑行上衣 男款 ¥589</td><td class="num alert">-1</td><td class="num">353</td><td class="num">589</td><td>配件</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:9px;color:#555555;margin-top:8px">注：UT套件组售价¥635远低于成本¥5,689，疑似录入错误，需核实</p>
+</div>
+
+<div class="source">数据来源：宇宙销售统计中心飞书多维表格，2026年3月11日导出 · 仅统计滨江仓库</div>
+</div>
+</body>
+</html>
